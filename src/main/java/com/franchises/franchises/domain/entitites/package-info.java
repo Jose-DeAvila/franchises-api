@@ -1,0 +1,1 @@
+package com.franchises.franchises.domain.entitites;
