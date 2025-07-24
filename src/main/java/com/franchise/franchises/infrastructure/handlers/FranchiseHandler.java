@@ -1,5 +1,6 @@
 package com.franchise.franchises.infrastructure.handlers;
 
+import com.franchise.franchises.domain.entities.exceptions.EntityNotFound;
 import com.franchise.franchises.domain.entities.models.Franchise;
 import com.franchise.franchises.domain.entities.ports.in.FranchiseServicePort;
 import com.franchise.franchises.infrastructure.dto.RenameRequest;
@@ -31,6 +32,8 @@ public class FranchiseHandler {
         String id = request.pathVariable("id");
         return request.bodyToMono(RenameRequest.class)
                 .flatMap(body -> franchiseServicePort.renameById(id, body.getNewName()))
-                .flatMap(updatedFranchise -> ServerResponse.ok().bodyValue("Franchise updated successfully"));
+                .flatMap(updatedFranchise -> ServerResponse.ok().bodyValue("Franchise updated successfully"))
+                .onErrorResume(EntityNotFound.class, e -> ServerResponse.notFound().build())
+                .onErrorResume(e -> ServerResponse.badRequest().bodyValue("Error renaming the franchise: " + e.getMessage()));
     }
 }

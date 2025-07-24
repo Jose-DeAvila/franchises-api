@@ -1,8 +1,9 @@
 package com.franchise.franchises.domain.entities.ports.out;
 
 import com.franchise.franchises.domain.entities.models.Branch;
+import reactor.core.publisher.Mono;
 
 public interface BranchPersistencePort {
-    void save(Branch branch);
-    void renameById(String id, String newName);
+    Mono<Branch> save(Branch branch);
+    Mono<Branch> renameById(String id, String newName);
 }
