@@ -42,7 +42,8 @@ public class BranchAdapter implements BranchPersistencePort {
                 .switchIfEmpty(Mono.error(new EntityNotFound("Branch", id)))
                 .flatMap(foundedBranch -> {
                     foundedBranch.setName(newName);
-                    Branch branch = new Branch(foundedBranch.getId(), foundedBranch.getName(),  foundedBranch.getFranchiseId());
+                    Branch branch = BranchMapper.toModel(foundedBranch);
+
                     return Mono.fromFuture(() -> branchTable.putItem(foundedBranch)).thenReturn(branch);
                 });
     }

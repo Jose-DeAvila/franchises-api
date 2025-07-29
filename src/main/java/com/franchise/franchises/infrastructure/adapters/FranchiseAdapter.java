@@ -34,7 +34,7 @@ public class FranchiseAdapter implements FranchisePersistencePort {
                 .switchIfEmpty(Mono.error(new EntityNotFound("Franchise", id)))
                 .flatMap(foundedFranchise -> {
                    foundedFranchise.setName(newName);
-                   Franchise franchise = new Franchise(foundedFranchise.getId(), foundedFranchise.getName());
+                   Franchise franchise = FranchiseMapper.toModel(foundedFranchise);
 
                    return Mono.fromFuture(() -> franchiseTable.updateItem(foundedFranchise)).thenReturn(franchise);
                 });

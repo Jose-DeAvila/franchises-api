@@ -3,6 +3,9 @@ package com.franchise.franchises.infrastructure.dto;
 public class RenameRequest {
     private String newName;
 
+    public RenameRequest() {
+    }
+
     public String getNewName() {
         return newName;
     }

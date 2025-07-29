@@ -4,7 +4,7 @@ import com.franchise.franchises.domain.entities.exceptions.EntityNotFound;
 import com.franchise.franchises.domain.entities.models.Branch;
 import com.franchise.franchises.domain.entities.ports.in.BranchServicePort;
 import com.franchise.franchises.infrastructure.dto.RenameRequest;
-import com.franchise.franchises.infrastructure.models.BranchEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -28,7 +28,8 @@ public class BranchHandler {
                         .created(URI.create(BASE + "/branch/" + createdBranch.id()))
                         .bodyValue("Branch created successfully"))
                 .onErrorResume(EntityNotFound.class, e -> ServerResponse
-                        .notFound().build())
+                        .status(HttpStatus.NOT_FOUND)
+                        .bodyValue(e.getMessage()))
                 .onErrorResume(e -> ServerResponse
                         .badRequest()
                         .bodyValue("Error creating the branch: " + e.getMessage()));
@@ -40,7 +41,11 @@ public class BranchHandler {
         return request.bodyToMono(RenameRequest.class)
                 .flatMap(body -> branchServicePort.renameById(id, body.getNewName()))
                 .flatMap(updatedBranch -> ServerResponse.ok().bodyValue("Branch updated successfully"))
-                .onErrorResume(EntityNotFound.class, e -> ServerResponse.notFound().build())
-                .onErrorResume(e -> ServerResponse.badRequest().bodyValue("Error renaming the branch: " + e.getMessage()));
+                .onErrorResume(EntityNotFound.class, e -> ServerResponse
+                        .status(HttpStatus.NOT_FOUND)
+                        .bodyValue(e.getMessage()))
+                .onErrorResume(e -> ServerResponse
+                        .badRequest()
+                        .bodyValue("Error renaming the branch: " + e.getMessage()));
     }
 }

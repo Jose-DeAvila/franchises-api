@@ -8,7 +8,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 @DynamoDbBean
 public class BranchProductEntity {
     private String branchId;
-    private String franchiseId;
+    private String productId;
     private String name;
     private Integer stock;
 
@@ -23,13 +23,13 @@ public class BranchProductEntity {
     }
 
     @DynamoDbSortKey
-    @DynamoDbAttribute("FranchiseID")
-    public String getFranchiseId() {
-        return franchiseId;
+    @DynamoDbAttribute("ProductID")
+    public String getProductId() {
+        return productId;
     }
 
-    public void setFranchiseId(String franchiseId) {
-        this.franchiseId = franchiseId;
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     @DynamoDbAttribute("name")

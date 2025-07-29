@@ -4,6 +4,7 @@ import com.franchise.franchises.domain.entities.exceptions.EntityNotFound;
 import com.franchise.franchises.domain.entities.models.Franchise;
 import com.franchise.franchises.domain.entities.ports.in.FranchiseServicePort;
 import com.franchise.franchises.infrastructure.dto.RenameRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -30,10 +31,17 @@ public class FranchiseHandler {
 
     public Mono<ServerResponse> renameById(ServerRequest request) {
         String id = request.pathVariable("id");
+
         return request.bodyToMono(RenameRequest.class)
                 .flatMap(body -> franchiseServicePort.renameById(id, body.getNewName()))
-                .flatMap(updatedFranchise -> ServerResponse.ok().bodyValue("Franchise updated successfully"))
-                .onErrorResume(EntityNotFound.class, e -> ServerResponse.notFound().build())
-                .onErrorResume(e -> ServerResponse.badRequest().bodyValue("Error renaming the franchise: " + e.getMessage()));
+                .flatMap(updatedFranchise -> ServerResponse
+                        .ok()
+                        .bodyValue("Franchise updated successfully"))
+                .onErrorResume(EntityNotFound.class, e -> ServerResponse
+                        .status(HttpStatus.NOT_FOUND)
+                        .bodyValue(e.getMessage()))
+                .onErrorResume(e -> ServerResponse
+                        .badRequest()
+                        .bodyValue("Error renaming the franchise: " + e.getMessage()));
     }
 }
